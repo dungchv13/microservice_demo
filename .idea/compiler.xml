@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="movie-info-service" />
+        <module name="discovery-server" />
+        <module name="rating-data-service" />
+        <module name="movie-catalog-service" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="discovery-server" target="1.5" />
+      <module name="movie-catalog-service" target="1.5" />
+      <module name="movie-info-service" target="1.5" />
+      <module name="rating-data-service" target="1.5" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
