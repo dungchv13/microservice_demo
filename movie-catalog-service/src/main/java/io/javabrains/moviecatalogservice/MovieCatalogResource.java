@@ -1,6 +1,7 @@
 package io.javabrains.moviecatalogservice;
 
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.javabrains.moviecatalogservice.models.CatalogItem;
 import io.javabrains.moviecatalogservice.models.Movie;
 import io.javabrains.moviecatalogservice.models.Rating;
@@ -33,29 +34,33 @@ public class MovieCatalogResource {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
+    @Autowired
+    MovieInfo movieInfo;
+
+    @Autowired
+    UserRatingInfo userRatingInfo;
+
     @GetMapping("/{userId}")
+//    @HystrixCommand(fallbackMethod = "getFallbackCatalog")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId){
 
 
-        UserRating ratings = restTemplate.getForObject("http://rating-data-service/ratingsdata/users/"+userId, UserRating.class);
+        UserRating ratings = userRatingInfo.getUserRating(userId);
 
         return ratings.getUserRating().stream().map(rating -> {
             // for each movie ID,  call movie info service and get details
-            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/"+ rating.getMovieId(), Movie.class);
-
-//            Movie movie = webClientBuilder.build()
-//                    .get()
-//                    .uri("http://localhost:8082/movies/" + rating.getMovieId())
-//                    .retrieve()
-//                    .bodyToMono(Movie.class)
-//                    .block();
-
-            return new CatalogItem(movie.getName(), "desc", rating.getRating());
+            return movieInfo.getCatalogItem(rating);
         }).collect(Collectors.toList());
 
 
-//        return Collections.singletonList(
-//                new CatalogItem("Tranformers","Tst",4)
-//        );
     }
+
+
+
+
+
+
+//    public List<CatalogItem> getFallbackCatalog(@PathVariable("userId") String userId){
+//        return Arrays.asList(new CatalogItem("No movie", "",0));
+//    }
 }
